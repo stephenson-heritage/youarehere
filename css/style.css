@@ -3,6 +3,18 @@ body {
 	padding: 0;
 }
 
+#loading > img {
+	width: 200px;
+}
+
+#loading {
+	border: 3px solid black;
+	border-style: outset;
+	position: fixed;
+	z-index: 250;
+	display: none;
+}
+
 .container {
 	display: flex;
 	width: 100%;

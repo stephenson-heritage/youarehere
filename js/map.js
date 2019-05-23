@@ -14,6 +14,7 @@ const geocodeURI = address => {
 
 let map = null;
 let locInfo = null;
+let loading = null;
 
 const centerOnUser = async () => {
 	if (map !== null) {
@@ -28,6 +29,8 @@ const centerOnUser = async () => {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
+	loading = document.getElementById("loading");
+
 	map = new mapboxgl.Map({
 		container: "map",
 		style: "mapbox://styles/stephenson-heritage/cjvxzf5s96jcy1cmptnuxdskv",
@@ -35,12 +38,31 @@ document.addEventListener("DOMContentLoaded", async () => {
 		zoom: 16
 	});
 
+	document.getElementById("btnFindIt").addEventListener("click", async () => {
+		let address = document.getElementById("txtAddress").value;
+		address = address.trim();
+		// console.log(address);
+		if (address.length >= 3) {
+			// console.log(geocodeURI(address));
+			const data = await fetch(geocodeURI(address));
+			const dataJson = await data.json();
+			console.log(dataJson);
+			if (dataJson.results.length >= 1) {
+				const geo = dataJson.results[0].geometry;
+				// console.log(geo);
+				map.easeTo({ center: [geo.lng, geo.lat] });
+			}
+		}
+	});
+
 	document.getElementById("easeToTokyo").addEventListener("click", async () => {
+		loading.style.display = "block";
+
 		const data = await fetch(geocodeURI("Tokyo"));
 		const dataJson = await data.json();
-
+		// console.log(dataJson);
 		const tokyo = dataJson.results[0].geometry;
-
+		loading.style.display = "none";
 		map.easeTo({ center: [tokyo.lng, tokyo.lat] });
 	});
 	document.getElementById("easeHome").addEventListener("click", async () => {
